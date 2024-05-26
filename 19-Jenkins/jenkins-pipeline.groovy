@@ -7,6 +7,12 @@ pipeline {
                 echo "hello world from ${env.HOSTNAME}"
             }
         }
+        stage("get-code") {
+            steps {
+                sh 'cp -r /home/mike/Downloads/git/DevopsZeroToHero/19-Jenkins ${WORKSPACE}'
+                sh 'docker build . -t test-py'
+            }
+        }
         stage("run-tests") {
             steps {
                 echo "running unit tests in docker container"
