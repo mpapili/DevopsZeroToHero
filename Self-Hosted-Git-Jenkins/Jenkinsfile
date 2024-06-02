@@ -1,0 +1,74 @@
+pipeline {
+    agent any
+
+    environment {
+        CODE_PATH = "/home/mike/Downloads/git/DevopsZeroToHero/My-Own-CICD"
+        IMAGE_NAME = "jenkins-test-py"
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                // This command checks out the source code from the SCM into the Jenkins workspace
+                checkout scm
+            }
+        }
+        stage("env-debug") {
+            steps {
+                // say which worker we're using
+                echo "hello world from ${env.HOSTNAME}"
+                sh 'ls'
+                sh 'pwd'
+                sh 'hostname'
+            }
+        }
+        stage('Deploy') {
+            when {
+                allOf {
+                    branch 'main'
+                    /*
+                    expression {
+                        return currentBuild.getBuildCauses().any { cause -> 
+                            cause.class.simpleName == 'SCMTriggerCause' || 
+                            cause.class.simpleName == 'GiteaPushCause'
+                        }
+                    */
+                }
+            }
+            steps {
+                // Add deploy steps here
+                echo 'Main branch detected!!'
+                echo 'Deploying...'
+            }
+        }
+        /*
+        stage("build-image") {
+            steps {
+                sh 'docker build . -t ${IMAGE_NAME}'
+            }
+        }
+        stage("run-tests") {
+            steps {
+                echo "running unit tests in docker container"
+                script {
+                    sh 'docker run --rm ${IMAGE_NAME} python3 /app/my_script.py'
+                }
+            }
+        }
+        stage("check-format") {
+            steps {
+                script {
+                    sh 'docker run --rm --workdir /app ${IMAGE_NAME} flake8 .'
+                }
+            }
+        }
+        stage("publish docker image") {
+            steps {
+                script {
+                    sh 'docker tag ${IMAGE_NAME} localhost:5000/test-py:latest'
+                    sh 'docker push localhost:5000/test-py:latest'
+                }
+            }
+        }
+        */
+    }
+}
