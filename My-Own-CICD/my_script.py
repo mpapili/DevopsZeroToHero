@@ -16,4 +16,4 @@ def add_nums(num1: int, num2: int) -> int:
 
 if __name__ == "__main__":
 
-    print(add_nums(1, 2))
+    print(add_nums(5, 6))

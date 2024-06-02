@@ -24,16 +24,6 @@ pipeline {
             steps {
                 echo "running unit tests in docker container"
                 script {
-                    /*
-                    // grab our desired docker image
-                    def dockerImage = docker.image('${IMAGE_NAME}')
-                    // run the docker image
-                    dockerImage.inside('--rm') {
-                        // Execute commands inside the Docker container
-                        sh 'echo "Running inside Docker"'
-                        sh 'python3 /app/my_script.py'
-                    }
-                    */
                     sh 'docker run --rm ${IMAGE_NAME} python3 /app/my_script.py'
                 }
             }
@@ -42,6 +32,14 @@ pipeline {
             steps {
                 script {
                     sh 'docker run --rm --workdir /app ${IMAGE_NAME} flake8 .'
+                }
+            }
+        }
+        stage("publish docker image") {
+            steps {
+                script {
+                    sh 'docker tag ${IMAGE_NAME} localhost:5000/test-py:latest'
+                    sh 'docker push localhost:5000/test-py:latest'
                 }
             }
         }
