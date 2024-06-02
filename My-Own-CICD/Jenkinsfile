@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    environment {
+        CODE_PATH = "/home/mike/Downloads/git/DevopsZeroToHero/My-Own-CICD"
+        IMAGE_NAME = "jenkins-test-py"
+    }
+    stages {
+        stage("test-stage1") {
+            steps {
+                // say which worker we're using
+                echo "hello world from ${env.HOSTNAME}"
+                sh 'ls'
+                sh 'pwd'
+                sh 'hostname'
+            }
+        }
+        stage("build-image") {
+            steps {
+                sh 'docker build . -t ${IMAGE_NAME}'
+            }
+        }
+        stage("run-tests") {
+            steps {
+                echo "running unit tests in docker container"
+                script {
+                    /*
+                    // grab our desired docker image
+                    def dockerImage = docker.image('${IMAGE_NAME}')
+                    // run the docker image
+                    dockerImage.inside('--rm') {
+                        // Execute commands inside the Docker container
+                        sh 'echo "Running inside Docker"'
+                        sh 'python3 /app/my_script.py'
+                    }
+                    */
+                    sh 'docker run --rm ${IMAGE_NAME} python3 /app/my_script.py'
+                }
+            }
+        }
+        stage("check-format") {
+            steps {
+                script {
+                    sh 'docker run --rm --workdir /app ${IMAGE_NAME} flake8 .'
+                }
+            }
+        }
+    }
+}

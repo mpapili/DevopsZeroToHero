@@ -1,0 +1,3 @@
+ JENKINS_URL/job/Jenkins-CICD/build?token=TOKEN_NAME or /buildWithParameters?token=TOKEN_NAME
+ 
+ TOKEN=this-is-my-test-token
